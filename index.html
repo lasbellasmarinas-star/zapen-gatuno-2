@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZAPEN Gatito Químico</title>
+   a <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Fuentes y estilo base */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f7; /* Fondo muy claro */
+            color: #1f2937; /* Texto oscuro */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Contenedor principal con estilo Cute */
+        .arcade-container {
+            width: 100%;
+            max-width: 850px;
+            border: 4px solid #fbcfe8; /* Borde rosa pastel */
+            box-shadow: 0 5px 20px rgba(251, 207, 232, 0.8), inset 0 0 10px rgba(251, 207, 232, 0.5);
+            padding: 25px;
+            background-color: #ffffff; /* Fondo blanco */
+            border-radius: 12px;
+            position: relative;
+        }
+
+        h1 {
+            color: #9333ea; /* Título morado suave */
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+            font-size: 2.25rem;
+            margin-bottom: 20px;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        /* Score Board */
+        .score-board {
+            background-color: #d1fae5; /* Fondo verde menta claro */
+            border: 2px solid #34d399; /* Borde verde menta */
+            color: #065f46;
+            font-size: 1.5rem;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Área de Juego */
+        .question-box {
+            background-color: #fff7ed; /* Fondo crema muy claro */
+            border: 1px solid #fed7aa; /* Borde naranja pálido */
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .question {
+            font-size: 1.75rem;
+            color: #f59e0b; /* Amarillo mostaza suave */
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        /* Inputs - Estilo SIMPLIFICADO Y BLANCO */
+        input[type="number"], input[type="text"] {
+            padding: 8px;
+            font-size: 1rem;
+            /* Borde más simple y sutil */
+            border: 2px solid #e5e7eb; 
+            background-color: #ffffff;
+            color: #1f2937;
+            text-align: center;
+            /* Esquinas suaves */
+            border-radius: 8px; 
+            width: 100%;
+            transition: border-color 0.2s;
+        }
+        
+        /* Ocultar flechas spinner en inputs tipo number */
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield; /* Para Firefox */
+        }
+
+        input[type="number"]:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: #9333ea; /* Morado al enfocar */
+            box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.3);
+        }
+
+        /* Estilo para el input de Símbolo (S) - Más grande y prominente */
+        #input-s-container {
+            margin-bottom: 20px;
+            max-width: 150px; /* Ancho fijo para centrar bien */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #input-s {
+            font-size: 1.75rem; /* Más grande */
+            padding: 15px 10px;
+            height: auto;
+            text-transform: none; /* Permitir minúsculas */
+        }
+
+        label {
+            color: #4b5563;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: block;
+        }
+
+        /* Botones de Verificación, Acabar y Toggle */
+        .action-button {
+            background-color: #ec4899; /* Botón Rosa fuerte */
+            color: #ffffff;
+            font-size: 1.25rem;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 4px #be185d;
+            transition: all 0.1s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .action-button:hover {
+            background-color: #f472b6;
+        }
+
+        .action-button:active {
+            box-shadow: 0 1px #be185d;
+            transform: translateY(2px);
+        }
+        
+        #toggle-table-btn {
+            font-size: 1rem;
+            padding: 8px 15px;
+            box-shadow: 0 3px #be185d;
+            width: 100%;
+        }
+        
+        /* Botones principales en la parte inferior */
+        .main-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .main-buttons .action-button {
+            width: 100%;
+            font-size: 1rem;
+            padding: 12px 15px;
+        }
+        
+        #finish-early-btn {
+            background-color: #9ca3af; /* Gris para "Rendirse" */
+            box-shadow: 0 4px #4b5563;
+        }
+        #finish-early-btn:hover { background-color: #d1d5db; }
+        #finish-early-btn:active { box-shadow: 0 1px #4b5563; }
+
+
+        /* Estilo para el botón de toggle cuando está 'abierto' */
+        .toggle-open {
+            background-color: #10b981 !important; /* Verde menta */
+            color: #ffffff !important;
+            box-shadow: 0 3px #047857;
+        }
+
+
+        /* Mensajes */
+        #message {
+            min-height: 40px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        /* Tabla de Consulta */
+        .lookup-table-container h2 {
+            color: #9333ea;
+            text-shadow: 0 0 1px rgba(147, 51, 234, 0.5);
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            border-top: 2px dashed #fbcfe8;
+            padding-top: 15px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        table {
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #fbcfe8;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #fce7f6; /* Fondo rosa pálido */
+            color: #9333ea;
+            font-weight: bold;
+        }
+
+        /* Pantalla de Victoria/Instrucciones (Modal) */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: #1f2937;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background-color: #ffffff;
+            border: 5px solid #fbcfe8;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .win-message p, .modal-content h2 {
+            font-size: 3rem;
+            color: #ec4899;
+            text-shadow: 0 0 5px #fbcfe8;
+            animation: pulse 1.5s infinite alternate;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .win-message {
+            display: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        /* Confeti y Serpentina (generados por JS) */
+        .confetti, .streamer {
+            position: absolute;
+            opacity: 0;
+            animation: fall 5s linear infinite;
+        }
+        
+        .confetti {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        .streamer {
+            width: 3px;
+            height: 25px; /* Más largo que el confeti */
+            border-radius: 2px;
+            animation: fall-streamer 5s linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        
+        @keyframes fall-streamer {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(1440deg); opacity: 0; }
+        }
+
+        /* Diseño de inputs ZAPEN en una línea */
+        .zapen-grid {
+            display: grid;
+            gap: 10px;
+            /* Predeterminado: 2 columnas en móvil */
+            grid-template-columns: repeat(2, 1fr); 
+            padding: 10px 0;
+        }
+
+        @media (min-width: 768px) {
+            .zapen-grid {
+                /* 5 columnas en desktop */
+                grid-template-columns: repeat(5, 1fr); 
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="arcade-container">
+        <h1>🐱 ZAPEN Gatito Químico 🧪</h1>
+        <div class="score-board">
+            Puntuación: <span id="score">0</span> / 3
+        </div>
+
+        <div class="game-area">
+            <div class="question-box">
+                <div class="question" id="element-question">
+                    Cargando Elemento...
+                </div>
+                
+                <!-- 1. Campo de Símbolo (S) - Grande y Centrado -->
+                <div id="input-s-container" class="text-center">
+                    <input type="text" id="input-s" placeholder="S" maxlength="2">
+                    <label>S (Símbolo)</label>
+                </div>
+                
+                <!-- 2. Campos ZAPEN (en una línea adaptable) -->
+                <div class="zapen-grid">
+                    <div class="text-center">
+                        <input type="number" id="input-z" placeholder="1" min="1" max="20">
+                        <label>Z (Nº Atómico)</label>
+                    </div>
+                    <div class="text-center">
+                        <input type="number" id="input-a" placeholder="1" min="1" max="50">
+                        <label>A (Masa Atómica)</label>
+                    </div>
+                    <div class="text-center">
+                        <input type="number" id="input-p" placeholder="1" min="1" max="20">
+                        <label>P (Protones)</label>
+                    </div>
+                    <div class="text-center">
+                        <input type="number" id="input-e" placeholder="1" min="1" max="20">
+                        <label>E (Electrones)</label>
+                    </div>
+                    <div class="text-center">
+                        <input type="number" id="input-n" placeholder="0" min="0" max="20">
+                        <label>N (Neutrones)</label>
+                    </div>
+                </div>
+
+                <div id="message" class="text-center mt-4"></div>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="main-buttons mt-4">
+                <button onclick="checkAnswer()" class="action-button">¡VERIFICAR!</button>
+                <button onclick="finishEarly()" id="finish-early-btn" class="action-button">ACABAR PARTIDA</button>
+            </div>
+        </div>
+
+        <div class="lookup-table-container">
+            <h2>Tabla de Consulta (Elementos 1-20)</h2>
+            
+            <button id="toggle-table-btn" onclick="toggleLookupTable()" class="mt-4 mb-3 p-2 action-button">
+                Mostrar Tabla de Consulta
+            </button>
+            
+            <div id="lookup-table-content" style="display: none;">
+                <p class="text-xs text-gray-500 mb-2">Usa esta tabla para encontrar Z (Número Atómico) y A (Masa Atómica) y así calcular N (Neutrones: A-Z).</p>
+                <div class="overflow-x-auto rounded-md">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Símbolo</th>
+                                <th>Z</th>
+                                <th>Masa (A)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lookup-table-body">
+                            <!-- Se rellena con JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA DE INSTRUCCIONES (Modal) -->
+    <div class="modal" id="instructions-modal">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold text-[#9333ea]">¡Bienvenido al ZAPEN Gatito Químico!</h2>
+            <p class="text-sm mb-4">Ayuda al gatito a identificar los elementos completando su tabla ZAPEN.</p>
+            <ul class="text-left list-disc list-inside space-y-2 mb-6">
+                <li><strong class="text-pink-600">Z (Nº Atómico):</strong> Identifica el elemento.</li>
+                <li><strong class="text-pink-600">P (Protones):</strong> Igual a Z (Nº Atómico).</li>
+                <li><strong class="text-pink-600">E (Electrones):</strong> Igual a P (Protones) en un átomo neutro.</li>
+                <li><strong class="text-pink-600">A (Masa Atómica):</strong> Masa del isótopo común.</li>
+                <li><strong class="text-pink-600">N (Neutrones):</strong> Se calcula como A - Z.</li>
+                <li><strong class="text-pink-600">S (Símbolo):</strong> El símbolo químico correcto.</li>
+            </ul>
+            <p class="font-semibold mb-6">¡Acierta 3 elementos para ganar y desatar la gran celebración gatuna! 🎉🐾</p>
+            <button onclick="startGame()" class="action-button">¡EMPEZAR A JUGAR!</button>
+        </div>
+    </div>
+
+
+    <!-- Pantalla de Victoria -->
+    <div class="modal win-message" id="win-message">
+        <div class="modal-content">
+            <p>🎉 ¡SÚPER GANADOR GATUNO! 🐾</p>
+            <div id="final-score-message" class="text-xl font-semibold mt-4 mb-8"></div>
+            <button onclick="location.reload()" class="action-button">JUGAR DE NUEVO</button>
+        </div>
+    </div>
+
+    <script>
+        // Los primeros 20 elementos
+        const elements = [
+            { name: "Hidrógeno", symbol: "H", Z: 1, A: 1 },
+            { name: "Helio", symbol: "He", Z: 2, A: 4 },
+            { name: "Litio", symbol: "Li", Z: 3, A: 7 },
+            { name: "Berilio", symbol: "Be", Z: 4, A: 9 },
+            { name: "Boro", symbol: "B", Z: 5, A: 11 },
+            { name: "Carbono", symbol: "C", Z: 6, A: 12 },
+            { name: "Nitrógeno", symbol: "N", Z: 7, A: 14 },
+            { name: "Oxígeno", symbol: "O", Z: 8, A: 16 },
+            { name: "Flúor", symbol: "F", Z: 9, A: 19 },
+            { name: "Neón", symbol: "Ne", Z: 10, A: 20 },
+            { name: "Sodio", symbol: "Na", Z: 11, A: 23 },
+            { name: "Magnesio", symbol: "Mg", Z: 12, A: 24 },
+            { name: "Aluminio", symbol: "Al", Z: 13, A: 27 },
+            { name: "Silicio", symbol: "Si", Z: 14, A: 28 },
+            { name: "Fósforo", symbol: "P", Z: 15, A: 31 },
+            { name: "Azufre", symbol: "S", Z: 16, A: 32 },
+            { name: "Cloro", symbol: "Cl", Z: 17, A: 35 }, 
+            { name: "Argón", symbol: "Ar", Z: 18, A: 40 },
+            { name: "Potasio", symbol: "K", Z: 19, A: 39 },
+            { name: "Calcio", symbol: "Ca", Z: 20, A: 40 }
+        ];
+
+        let currentElement = null;
+        let score = 0;
+        let askedElements = [];
+        const WINNING_SCORE = 3;
+
+        // Función para generar colores aleatorios para el confeti
+        function getRandomColor() {
+            const colors = ['#fbcfe8', '#a7f3d0', '#fde68a', '#9333ea', '#ec4899'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // Función para generar un tono más elaborado (simulando un "meow" más realista y largo)
+        function playMeowSound() {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return; 
+
+            try {
+                const audioCtx = new AudioContext();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                oscillator.type = 'sine'; 
+                const now = audioCtx.currentTime;
+                const duration = 0.8; 
+
+                // 1. Control de Ganancia (Volumen)
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(0.7, now + 0.05); 
+                gainNode.gain.linearRampToValueAtTime(0.5, now + 0.5); 
+                gainNode.gain.linearRampToValueAtTime(0, now + duration); 
+
+                // 2. Control de Frecuencia (Pitch - para un maullido más realista)
+                const startFreq = 350; 
+                const midFreq = 500;   
+                const peakFreq = 850;  
+
+                oscillator.frequency.setValueAtTime(startFreq, now);
+                oscillator.frequency.linearRampToValueAtTime(midFreq, now + 0.1); 
+                oscillator.frequency.linearRampToValueAtTime(peakFreq, now + 0.2); 
+                oscillator.frequency.linearRampToValueAtTime(midFreq, now + 0.3); 
+                oscillator.frequency.linearRampToValueAtTime(midFreq + 50, now + 0.6);
+                oscillator.frequency.linearRampToValueAtTime(midFreq - 50, now + 0.7);
+                oscillator.frequency.linearRampToValueAtTime(0, now + duration);
+                
+                oscillator.start(now);
+                oscillator.stop(now + duration); 
+
+            } catch (error) {
+                console.error("No se pudo iniciar el AudioContext:", error);
+            }
+        }
+
+        /**
+         * Normaliza el símbolo químico introducido por el usuario.
+         * Asegura que el primer carácter sea mayúscula y el segundo, si existe, minúscula (ej. 'he' -> 'He').
+         * @param {string} input - Símbolo introducido por el usuario.
+         * @returns {string} El símbolo con la capitalización correcta.
+         */
+        function normalizeSymbolCase(input) {
+            if (!input) return "";
+            input = input.trim();
+            if (input.length === 1) {
+                return input.toUpperCase();
+            }
+            if (input.length === 2) {
+                // Primer carácter en mayúscula, segundo en minúscula (e.g., Na, He)
+                return input.charAt(0).toUpperCase() + input.charAt(1).toLowerCase();
+            }
+            return input;
+        }
+
+
+        // Función para obtener un elemento aleatorio que no se haya preguntado
+        function getRandomElement() {
+            if (askedElements.length === elements.length) {
+                askedElements = [];
+            }
+            let availableElements = elements.filter(el => !askedElements.includes(el.symbol));
+            const randomIndex = Math.floor(Math.random() * availableElements.length);
+            return availableElements[randomIndex];
+        }
+
+        // Función para iniciar un nuevo turno
+        function newTurn() {
+            if (score >= WINNING_SCORE) return;
+
+            currentElement = getRandomElement();
+            askedElements.push(currentElement.symbol);
+            
+            currentElement.P = currentElement.Z; 
+            currentElement.E = currentElement.Z; 
+            currentElement.N = currentElement.A - currentElement.Z; 
+
+            document.getElementById('element-question').textContent = `Completa la tabla ZAPEN para el elemento: ${currentElement.name}`;
+            
+            // Limpiar inputs
+            document.getElementById('input-s').value = '';
+            document.getElementById('input-z').value = '';
+            document.getElementById('input-a').value = '';
+            document.getElementById('input-p').value = '';
+            document.getElementById('input-e').value = '';
+            document.getElementById('input-n').value = '';
+            
+            document.getElementById('message').textContent = '¡Ingresa tus valores!';
+            document.getElementById('message').className = 'text-center mt-4 text-[#1f2937]';
+        }
+        
+        // Función para iniciar el juego (oculta instrucciones)
+        window.startGame = function() {
+            document.getElementById('instructions-modal').style.display = 'none';
+            newTurn();
+        }
+
+        // Función para manejar la pulsación de la tecla Enter
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                checkAnswer();
+            }
+        }
+
+        // Función para terminar la partida antes de tiempo
+        window.finishEarly = function() {
+            const message = score === 0 
+                ? "No conseguiste puntos. ¡Vuelve a intentarlo!"
+                : `¡Partida finalizada! Tu puntuación final es ${score} de ${WINNING_SCORE}.`;
+            showWinScreen(message);
+        }
+
+        // Función para verificar la respuesta del usuario
+        window.checkAnswer = function() {
+            if (!currentElement) return;
+
+            // Extrae el valor del símbolo sin forzar a mayúsculas
+            const raw_S_input = document.getElementById('input-s').value;
+            // Normaliza el símbolo para la comparación (ej: 'he' -> 'He')
+            const S_input = normalizeSymbolCase(raw_S_input);
+
+            const Z_input = parseInt(document.getElementById('input-z').value);
+            const A_input = parseInt(document.getElementById('input-a').value);
+            const P_input = parseInt(document.getElementById('input-p').value);
+            const E_input = parseInt(document.getElementById('input-e').value);
+            const N_input = parseInt(document.getElementById('input-n').value);
+
+            let feedback = [];
+
+            // Verificar si todos los campos tienen un valor válido (no NaN y S_input no vacío)
+            if (isNaN(Z_input) || isNaN(A_input) || isNaN(P_input) || isNaN(E_input) || isNaN(N_input) || S_input === "") {
+                document.getElementById('message').textContent = "❌ ¡Por favor, rellena todos los campos!";
+                document.getElementById('message').className = 'text-center mt-4 text-[#ef4444]';
+                return;
+            }
+
+            // Chequeo de valores
+            const coreValuesCorrect = 
+                S_input === currentElement.symbol &&
+                Z_input === currentElement.Z && 
+                A_input === currentElement.A &&
+                P_input === currentElement.P && 
+                E_input === currentElement.E && 
+                N_input === currentElement.N;
+
+            const messageElement = document.getElementById('message');
+
+            if (coreValuesCorrect) {
+                score++;
+                document.getElementById('score').textContent = score;
+                playMeowSound(); // ¡Maullido de celebración!
+                messageElement.textContent = "✅ ¡ZAPEN COMPLETO Y CORRECTO! ¡PUNTO GANADO! 🐾";
+                messageElement.className = 'text-center mt-4 text-[#10b981]';
+                
+                if (score >= WINNING_SCORE) {
+                    // Victoria final: Confeti masivo y serpentinas
+                    triggerConfetti(8, true); // Más confeti y serpentinas (flag a true)
+                    showWinScreen(`¡Has identificado a los 3 elementos correctamente!`);
+                } else {
+                    // Acierto individual: Confeti moderado
+                    triggerConfetti(1, false);
+                    setTimeout(newTurn, 1500); 
+                }
+            } else {
+                // Generar feedback si es incorrecto (sólo para depuración/guía)
+                if (S_input !== currentElement.symbol) feedback.push(`S (${currentElement.symbol})`);
+                if (Z_input !== currentElement.Z) feedback.push(`Z (${currentElement.Z})`);
+                if (A_input !== currentElement.A) feedback.push(`A (${currentElement.A})`);
+                if (P_input !== currentElement.P) feedback.push(`P (${currentElement.P})`);
+                if (E_input !== currentElement.E) feedback.push(`E (${currentElement.E})`);
+                if (N_input !== currentElement.N) feedback.push(`N (${currentElement.N})`);
+                
+                const errorDetails = feedback.length > 0 ? `Fallaste en: ${feedback.join(', ')}.` : '';
+                messageElement.textContent = `❌ ¡RESPUESTA INCORRECTA! Revisa tus cálculos. ${errorDetails} 😿`;
+                messageElement.className = 'text-center mt-4 text-[#ef4444]'; 
+                
+                setTimeout(newTurn, 4000); 
+            }
+        }
+
+        // Función para lanzar confeti y serpentinas
+        function triggerConfetti(countMultiplier = 1, includeStreamers = false) {
+            const container = document.body;
+            const baseCount = 30; 
+            const totalConfetti = baseCount * countMultiplier;
+            const totalStreamers = includeStreamers ? baseCount * countMultiplier / 2 : 0;
+
+            // Generar Confeti (cuadrados y círculos)
+            for (let i = 0; i < totalConfetti; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                
+                confetti.style.left = `${Math.random() * 100}vw`;
+                confetti.style.top = `${Math.random() * -10}vh`;
+
+                confetti.style.backgroundColor = getRandomColor();
+                confetti.style.width = `${Math.random() * 8 + 4}px`;
+                confetti.style.height = `${Math.random() * 8 + 4}px`;
+                confetti.style.borderRadius = `${Math.random() > 0.5 ? '50%' : '0'}`;
+
+                confetti.style.animationDelay = `${-Math.random() * 5}s`;
+                confetti.style.animationDuration = `${Math.random() * 3 + 4}s`;
+
+                container.appendChild(confetti);
+
+                confetti.addEventListener('animationend', () => {
+                    confetti.remove();
+                });
+            }
+            
+            // Generar Serpentinas (partículas largas y rectangulares)
+            for (let i = 0; i < totalStreamers; i++) {
+                const streamer = document.createElement('div');
+                streamer.classList.add('streamer'); // Usa la clase streamer para la animación de rotación más rápida
+                
+                streamer.style.left = `${Math.random() * 100}vw`;
+                streamer.style.top = `${Math.random() * -10}vh`;
+
+                streamer.style.backgroundColor = getRandomColor();
+                // Dimensiones de serpentina
+                streamer.style.width = `${Math.random() * 2 + 2}px`; 
+                streamer.style.height = `${Math.random() * 20 + 30}px`; 
+                streamer.style.borderRadius = '1px';
+
+                streamer.style.animationDelay = `${-Math.random() * 5}s`;
+                streamer.style.animationDuration = `${Math.random() * 3 + 4}s`; // Mismo tiempo de caída
+
+                container.appendChild(streamer);
+
+                streamer.addEventListener('animationend', () => {
+                    streamer.remove();
+                });
+            }
+        }
+
+        // Función para mostrar la pantalla de victoria/fin de partida
+        function showWinScreen(customMessage) {
+            document.getElementById('final-score-message').textContent = customMessage || `¡Felicidades! Lograste una puntuación perfecta de ${score} / ${WINNING_SCORE}.`;
+            document.getElementById('win-message').style.display = 'flex';
+        }
+
+
+        // Función para ocultar/mostrar la tabla de consulta
+        window.toggleLookupTable = function() {
+            const content = document.getElementById('lookup-table-content');
+            const button = document.getElementById('toggle-table-btn');
+
+            if (content.style.display === 'none' || content.style.display === '') {
+                content.style.display = 'block';
+                button.textContent = 'Ocultar Tabla de Consulta';
+                button.classList.add('toggle-open');
+            } else {
+                content.style.display = 'none';
+                button.textContent = 'Mostrar Tabla de Consulta';
+                button.classList.remove('toggle-open');
+            }
+        }
+
+
+        // Rellenar la tabla de consulta
+        function fillLookupTable() {
+            const tbody = document.getElementById('lookup-table-body');
+            elements.forEach(el => {
+                const row = tbody.insertRow();
+                row.insertCell().textContent = el.name;
+                row.insertCell().textContent = el.symbol;
+                row.insertCell().textContent = el.Z;
+                row.insertCell().textContent = el.A; 
+            });
+        }
+
+        // Inicio: Mostrar instrucciones y preparar listeners
+        window.onload = () => {
+            fillLookupTable();
+            
+            document.getElementById('instructions-modal').style.display = 'flex';
+            
+            document.querySelectorAll('.game-area input').forEach(input => {
+                input.addEventListener('keydown', handleKeyPress);
+            });
+        };
+
+    </script>
+</body>
+</html>
